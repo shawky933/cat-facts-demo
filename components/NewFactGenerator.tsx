@@ -1,10 +1,10 @@
 "use client";                       // Marks this as a Client Component
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 
 // Re-use the same type
 type CatFact = { fact: string; length: number };
 
-export default function NewFactButton() {
+export default function NewFactGenerator() {
   const [fact, setFact] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -16,8 +16,14 @@ export default function NewFactButton() {
     });
   }
 
+  // Fetch a fact when component mounts
+  useEffect(() => {
+    getAnother();
+  }, []); // Empty dependency array means this runs once on mount
+
   return (
-    <div className="mt-10 flex flex-col items-center gap-4">
+    <div className="w-full mt-10 flex flex-col items-center gap-4">
+      {fact && <blockquote className="prose text-center italic">{fact}</blockquote>}
       <button
         onClick={getAnother}
         disabled={isPending}
@@ -25,8 +31,6 @@ export default function NewFactButton() {
       >
         {isPending ? "Fetching…" : "Get another fact"}
       </button>
-
-      {fact && <p className="max-w-prose text-center italic">{fact}</p>}
     </div>
   );
 }
